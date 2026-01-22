@@ -58,10 +58,23 @@ jobs:
 
       - name: Extract version from tag
         id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          # Extract prerelease tag if present (e.g., "alpha" from "1.2.3-alpha.13")
+          if [[ "$VERSION" =~ -([a-zA-Z]+)\. ]]; then
+            echo "TAG=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Update package version
         run: npm version ${{ steps.version.outputs.VERSION }} --no-git-tag-version
 
       - name: Publish to npm
-        run: npm publish
+        run: |
+          if [ -n "${{ steps.version.outputs.TAG }}" ]; then
+            npm publish --tag ${{ steps.version.outputs.TAG }}
+          else
+            npm publish
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
