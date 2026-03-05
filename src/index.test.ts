@@ -69,6 +69,45 @@ describe('Filter', () => {
     expect(f.value).toBe('test');
     expect(f.caseSensitive).toBe(true);
   });
+
+  it('should create an IN filter with comma-separated values', () => {
+    const f = new Filter('Category', FilterOperator.In, 'Electronics,Books,Toys');
+
+    expect(f.fields).toEqual(['Category']);
+    expect(f.operator).toBe('in');
+    expect(f.value).toBe('Electronics,Books,Toys');
+  });
+
+  it('should serialize IN filter to dictionary', () => {
+    const f = new Filter('Category', FilterOperator.In, 'Electronics,Books');
+    const dict = f.toDictionary();
+
+    expect(dict).toEqual({
+      fields: 'Category',
+      op: 'in',
+      val: 'Electronics,Books',
+    });
+  });
+
+  it('should create a NOT IN filter', () => {
+    const f = new Filter('Status', FilterOperator.NotIn, 'Archived,Deleted');
+
+    expect(f.operator).toBe('notin');
+    expect(f.value).toBe('Archived,Deleted');
+  });
+
+  it('should deserialize IN filter from dictionary', () => {
+    const dict = {
+      fields: 'Category',
+      op: 'in',
+      val: 'Electronics,Books,Toys',
+    };
+
+    const f = Filter.fromDictionary(dict);
+
+    expect(f.operator).toBe(FilterOperator.In);
+    expect(f.value).toBe('Electronics,Books,Toys');
+  });
 });
 
 describe('FilterBuilder', () => {
@@ -86,6 +125,21 @@ describe('FilterBuilder', () => {
 
     expect(f.fields).toEqual(['Name', 'Description', 'Tags']);
     expect(f.operator).toBe(FilterOperator.Contains);
+  });
+
+  it('should build IN filter with fluent API', () => {
+    const f = filter().field('Category').in('Electronics', 'Books', 'Toys').build();
+
+    expect(f.fields).toEqual(['Category']);
+    expect(f.operator).toBe(FilterOperator.In);
+    expect(f.value).toBe('Electronics,Books,Toys');
+  });
+
+  it('should build NOT IN filter with fluent API', () => {
+    const f = filter().field('Status').notIn('Archived', 'Deleted').build();
+
+    expect(f.operator).toBe(FilterOperator.NotIn);
+    expect(f.value).toBe('Archived,Deleted');
   });
 });
 

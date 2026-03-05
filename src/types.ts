@@ -10,6 +10,8 @@ export const FilterOperator = {
   LessThanOrEquals: 'lte',
   Contains: 'contains',
   NotContains: 'ncontains',
+  In: 'in',
+  NotIn: 'notin',
   Null: 'null',
   NotNull: 'notnull',
 } as const;

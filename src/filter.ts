@@ -137,6 +137,14 @@ export class FilterBuilder {
     return this.op(FilterOperator.NotContains).value(value);
   }
 
+  in(...values: string[]): this {
+    return this.op(FilterOperator.In).value(values.join(','));
+  }
+
+  notIn(...values: string[]): this {
+    return this.op(FilterOperator.NotIn).value(values.join(','));
+  }
+
   isNull(): this {
     return this.op(FilterOperator.Null);
   }
