@@ -61,6 +61,8 @@ import { filter, FilterOperator } from 'pafiso';
 filter().field('Name').equals('John').build();
 filter().field('Age').greaterThan('18').build();
 filter().field('Name').contains('test').caseSensitive().build();
+filter().field('Category').in('Electronics', 'Books', 'Toys').build();
+filter().field('Status').notIn('Archived', 'Deleted').build();
 filter().field('DeletedAt').isNull().build();
 
 // Available operators
@@ -72,6 +74,8 @@ FilterOperator.GreaterThanOrEquals
 FilterOperator.LessThanOrEquals
 FilterOperator.Contains
 FilterOperator.NotContains
+FilterOperator.In
+FilterOperator.NotIn
 FilterOperator.Null
 FilterOperator.NotNull
 ```
@@ -204,6 +208,8 @@ take=10
 | `lessThanOrEquals(val)` | Shorthand for `op(LessThanOrEquals).value(val)` |
 | `contains(val)` | Shorthand for `op(Contains).value(val)` |
 | `notContains(val)` | Shorthand for `op(NotContains).value(val)` |
+| `in(...vals)` | Shorthand for `op(In).value(vals.join(','))` |
+| `notIn(...vals)` | Shorthand for `op(NotIn).value(vals.join(','))` |
 | `isNull()` | Shorthand for `op(Null)` |
 | `isNotNull()` | Shorthand for `op(NotNull)` |
 | `build()` | Build Filter instance |
