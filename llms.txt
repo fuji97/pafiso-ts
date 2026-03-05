@@ -1,0 +1,54 @@
+# Pafiso (TypeScript)
+
+> TypeScript library for generating Paging, Filtering, and Sorting parameters for REST requests. Compatible with the [Pafiso .NET library](https://github.com/fuji97/pafiso).
+
+This library provides a fluent builder API and direct class constructors for building search query parameters that serialize to a bracket-notation format (`filters[0][fields]=Name&filters[0][op]=Contains&...`).
+
+## Quick Start
+
+```typescript
+import { search } from 'pafiso';
+
+const queryString = search()
+  .filter(f => f.field('Name').contains('Franco'))
+  .filter(f => f.field('Age').greaterThan('20'))
+  .sortBy(s => s.by('Name').asc())
+  .page(1, 10)
+  .toQueryString();
+```
+
+## Core Concepts
+
+The library has four modules, each with a data class, a fluent builder, and a factory function:
+
+- **Filter** (`filter()` / `FilterBuilder` / `Filter`): Filter conditions with field(s), operator, value, and case sensitivity. Multiple fields create an OR condition.
+- **Sorting** (`sorting()` / `SortingBuilder` / `Sorting`): Sort by a property in ascending or descending order.
+- **Paging** (`paging()` / `PagingBuilder` / `Paging`): Pagination via skip/take or page number/size.
+- **SearchParameters** (`search()` / `SearchParametersBuilder` / `SearchParameters`): Combines filters, sortings, and paging into a single query specification.
+
+## Filter Operators
+
+Equals, NotEquals, GreaterThan, LessThan, GreaterThanOrEquals, LessThanOrEquals, Contains, NotContains, In, NotIn, Null, NotNull.
+
+## Output Formats
+
+All builders and data classes support:
+- `toDictionary()` — `Record<string, string>`
+- `toURLSearchParams()` — `URLSearchParams`
+- `toQueryString()` — query string without leading `?`
+
+## Parsing
+
+```typescript
+import { SearchParameters } from 'pafiso';
+
+const params = SearchParameters.fromQueryString('filters[0][fields]=Name&filters[0][op]=Contains&filters[0][val]=test');
+const params2 = SearchParameters.fromURLSearchParams(urlSearchParams);
+const params3 = SearchParameters.fromDictionary(dict);
+```
+
+## Optional Links
+
+- [GitHub Repository](https://github.com/fuji97/pafiso-ts)
+- [Pafiso .NET Library](https://github.com/fuji97/pafiso)
+- [npm Package](https://www.npmjs.com/package/pafiso)
